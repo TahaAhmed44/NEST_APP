@@ -6,7 +6,8 @@ import {
   Virtual,
 } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { GenderEnum, generateHash, ProviderEnum } from 'src/common';
+import { GenderEnum, generateHash, ProviderEnum, RoleEnum } from 'src/common';
+import { OtpDocument } from './otp.model';
 
 @Schema({
   timestamps: true,
@@ -55,7 +56,7 @@ export class User {
     type: Date,
     required: false,
   })
-  confirmEmail: string;
+  confirmAt: Date;
 
   @Prop({
     type: String,
@@ -74,6 +75,13 @@ export class User {
 
   @Prop({
     type: String,
+    enum: RoleEnum,
+    default: RoleEnum.user,
+  })
+  role: RoleEnum;
+
+  @Prop({
+    type: String,
     enum: GenderEnum,
     default: GenderEnum.male,
   })
@@ -83,12 +91,22 @@ export class User {
     type: Date,
     required: false,
   })
-  changeCredentialsTime: string;
+  changeCredentialsTime: Date;
+
+  @Virtual()
+  otp: OtpDocument[];
 }
 
 const userSchema = SchemaFactory.createForClass(User);
 export type UserDocument = HydratedDocument<User>;
 
+userSchema.virtual('otp', {
+  localField: '_id',
+  foreignField: 'createdBy',
+  ref: 'Otp',
+});
+
+//Hashing-Password
 userSchema.pre('save', async function (next) {
   if (this.isModified('password')) {
     this.password = await generateHash({ plainText: this.password });

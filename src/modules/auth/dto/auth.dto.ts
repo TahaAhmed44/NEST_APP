@@ -3,11 +3,27 @@ import {
   IsNotEmpty,
   IsString,
   IsStrongPassword,
+  Matches,
   MaxLength,
   MinLength,
   ValidateIf,
 } from 'class-validator';
 import { IsMatched } from 'src/common';
+
+export class ResendConfirmEmailDTO {
+  @IsEmail()
+  email: string;
+}
+
+export class ConfirmEmailDTO extends ResendConfirmEmailDTO {
+  @Matches(/^\d{6}$/)
+  code: string;
+}
+
+export class LoginBodyDTO extends ResendConfirmEmailDTO {
+  @IsStrongPassword({ minUppercase: 1 })
+  password: string;
+}
 
 export class SignupBodyDTO {
   @IsString()
@@ -29,3 +45,4 @@ export class SignupBodyDTO {
   })
   confirmPassword: string;
 }
+

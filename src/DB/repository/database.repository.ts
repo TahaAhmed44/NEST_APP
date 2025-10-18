@@ -2,8 +2,10 @@ import {
   CreateOptions,
   DeleteResult,
   FlattenMaps,
+  HydratedDocument,
   Model,
   MongooseUpdateQueryOptions,
+  PopulateOptions,
   ProjectionType,
   QueryOptions,
   RootFilterQuery,
@@ -14,7 +16,10 @@ import {
 
 export type Lean<T> = FlattenMaps<T>;
 
-export abstract class DatabaseRepository<TDocument> {
+export abstract class DatabaseRepository<
+  TRawDocument,
+  TDocument = HydratedDocument<TRawDocument>,
+> {
   protected constructor(protected model: Model<TDocument>) {}
 
   async find({
@@ -22,8 +27,8 @@ export abstract class DatabaseRepository<TDocument> {
     select,
     options,
   }: {
-    filter?: RootFilterQuery<TDocument>;
-    select?: ProjectionType<TDocument> | null;
+    filter?: RootFilterQuery<TRawDocument>;
+    select?: ProjectionType<TRawDocument> | null;
     options?: QueryOptions<TDocument> | null;
   }): Promise<Lean<TDocument>[] | TDocument[] | []> {
     const doc = this.model.find(filter || {}).select(select || '');
@@ -44,14 +49,24 @@ export abstract class DatabaseRepository<TDocument> {
     select,
     options,
   }: {
-    filter?: RootFilterQuery<TDocument>;
-    select?: ProjectionType<TDocument> | null;
-    options?: QueryOptions<TDocument> | null;
+    filter?: RootFilterQuery<TRawDocument>;
+    select?: ProjectionType<TRawDocument> | null;
+    options?:
+      | (QueryOptions<TDocument> & {
+          populate?: string | PopulateOptions | (string | PopulateOptions)[];
+        })
+      | null;
   }): Promise<Lean<TDocument> | TDocument | null> {
     const doc = this.model.findOne(filter).select(select || '');
+
     if (options?.lean) {
       doc.lean(options.lean);
     }
+
+    if (options?.populate) {
+      doc.populate(options.populate as PopulateOptions);
+    }
+
     return await doc.exec();
   }
 
@@ -61,7 +76,7 @@ export abstract class DatabaseRepository<TDocument> {
     options,
   }: {
     id: Types.ObjectId;
-    select?: ProjectionType<TDocument> | null;
+    select?: ProjectionType<TRawDocument> | null;
     options?: QueryOptions<TDocument> | null;
   }): Promise<Lean<TDocument> | TDocument | null> {
     const doc = this.model.findById(id).select(select || '');
@@ -75,7 +90,7 @@ export abstract class DatabaseRepository<TDocument> {
     data,
     options,
   }: {
-    data: Partial<TDocument>[];
+    data: Partial<TRawDocument>[];
     options?: CreateOptions;
   }): Promise<TDocument[]> {
     return (await this.model.create(data, options)) || [];
@@ -94,7 +109,7 @@ export abstract class DatabaseRepository<TDocument> {
     update,
     options,
   }: {
-    filter: RootFilterQuery<TDocument>;
+    filter: RootFilterQuery<TRawDocument>;
     update: UpdateQuery<TDocument>;
     options?: MongooseUpdateQueryOptions<TDocument> | null;
   }): Promise<UpdateWriteOpResult> {
@@ -108,7 +123,7 @@ export abstract class DatabaseRepository<TDocument> {
   async deleteOne({
     filter,
   }: {
-    filter: RootFilterQuery<TDocument>;
+    filter: RootFilterQuery<TRawDocument>;
   }): Promise<DeleteResult> {
     return await this.model.deleteOne(filter);
   }
@@ -116,7 +131,7 @@ export abstract class DatabaseRepository<TDocument> {
   async findOneAndDelete({
     filter,
   }: {
-    filter: RootFilterQuery<TDocument>;
+    filter: RootFilterQuery<TRawDocument>;
   }): Promise<TDocument | null> {
     return await this.model.findOneAndDelete(filter);
   }
@@ -124,7 +139,7 @@ export abstract class DatabaseRepository<TDocument> {
   async deleteMany({
     filter,
   }: {
-    filter: RootFilterQuery<TDocument>;
+    filter: RootFilterQuery<TRawDocument>;
   }): Promise<DeleteResult> {
     return await this.model.deleteMany(filter);
   }
@@ -150,7 +165,7 @@ export abstract class DatabaseRepository<TDocument> {
     update,
     options = { new: true },
   }: {
-    filter?: RootFilterQuery<TDocument>;
+    filter?: RootFilterQuery<TRawDocument>;
     update?: UpdateQuery<TDocument>;
     options?: QueryOptions<TDocument> | null;
   }): Promise<TDocument | Lean<TDocument> | null> {
