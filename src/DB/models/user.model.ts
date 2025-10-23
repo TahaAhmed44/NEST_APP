@@ -5,9 +5,9 @@ import {
   SchemaFactory,
   Virtual,
 } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
 import { GenderEnum, generateHash, ProviderEnum, RoleEnum } from 'src/common';
 import { OtpDocument } from './otp.model';
+import { HydratedDocument } from 'mongoose';
 
 @Schema({
   timestamps: true,

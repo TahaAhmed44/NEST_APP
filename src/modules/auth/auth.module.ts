@@ -1,10 +1,16 @@
-import { Module } from "@nestjs/common";
-import { OtpModel, OtpRepository, TokenModel, TokenRepository, UserModel, UserRepository } from "src/DB";
-import { AuthenticationController } from "./auth.controller";
-import { AuthenticationService } from "./auth.service";
-import { JwtService } from "@nestjs/jwt";
-import { TokenService } from "src/common";
-
+import { Module } from '@nestjs/common';
+import { AuthenticationController } from './auth.controller';
+import { AuthenticationService } from './auth.service';
+import { JwtService } from '@nestjs/jwt';
+import { TokenService } from 'src/common';
+import {
+  OtpModel,
+  OtpRepository,
+  TokenModel,
+  TokenRepository,
+  UserModel,
+  UserRepository,
+} from 'src/DB';
 
 @Module({
   imports: [UserModel, OtpModel, TokenModel],

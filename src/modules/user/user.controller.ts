@@ -1,17 +1,31 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Post, Req } from '@nestjs/common';
 import { UserService } from './user.service';
-import { IUser } from '../auth/auth.service';
+import type { IAuthRequest } from 'src/common/interface/token.interface';
+import { Auth, RoleEnum } from 'src/common';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get('profile/:userId')
-  profile(@Param('userId') userId: string): {
-    message: string;
-    profile: IUser;
-  } {
-    const profile = this.userService.profile(userId);
-    return { message: 'Done', profile };
+  @Auth([RoleEnum.user])
+  @Get('profile')
+  profile(@Req() req: IAuthRequest): { message: string } {
+    console.log({
+      lang: req.headers['accept-language'],
+      credentials: req.credentials,
+    });
+
+    return { message: 'Done' };
+  }
+
+  @Post('test')
+  test(@Req() req: IAuthRequest): { message: string } {
+    console.log(
+      // lang: req.headers['accept-language'],
+      // credentials: req.credentials,
+      'Test Good',
+    );
+
+    return { message: 'Done' };
   }
 }

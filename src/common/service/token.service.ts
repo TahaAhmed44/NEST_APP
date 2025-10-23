@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { JwtService, JwtSignOptions, JwtVerifyOptions } from '@nestjs/jwt';
 import { JwtPayload } from 'jsonwebtoken';
-import { RoleEnum, SignatureLevelEnum, TokenEnum } from 'src/common/enums';
+import { RoleEnum, SignatureLevelEnum, TokenEnum } from 'src/common';
 import {
   TokenDocument,
   TokenRepository,
@@ -46,7 +46,7 @@ export class TokenService {
     token: string;
     options?: JwtVerifyOptions;
   }): Promise<JwtPayload> => {
-    return this.jwtService.verifyAsync(token, options) as unknown as JwtPayload;
+    return await this.jwtService.verifyAsync(token, options);
   };
 
   detectSignatureLevel = async (
@@ -96,7 +96,7 @@ export class TokenService {
     const jwtid = randomUUID();
     const access_token = await this.generateToken({
       payload: {
-        _id: user._id,
+        sub: user._id,
       },
       options: {
         expiresIn: Number(process.env.ACCESS_TOKEN_EXPIRES_IN),
@@ -107,7 +107,7 @@ export class TokenService {
 
     const refresh_token = await this.generateToken({
       payload: {
-        _id: user._id,
+        sub: user._id,
       },
       options: {
         expiresIn: Number(process.env.REFRESH_TOKEN_EXPIRES_IN),
@@ -144,6 +144,7 @@ export class TokenService {
               : signatures.access_Signature,
         },
       });
+      console.log(decoded);
 
       if (!decoded?.sub || !decoded?.iat) {
         throw new BadRequestException('In-valid token payload.');
@@ -161,6 +162,7 @@ export class TokenService {
       if (!user) {
         throw new NotFoundException('Not register account.');
       }
+
       if ((user.changeCredentialsTime?.getTime() || 0) > decoded.iat * 1000) {
         throw new UnauthorizedException('In-valid or login credentials.');
       }
@@ -168,7 +170,7 @@ export class TokenService {
       return { user, decoded };
     } catch (error) {
       throw new InternalServerErrorException(
-        error.message || 'something went wrong!!',
+        (error.message && error.stack) || 'something went wrong!!',
       );
     }
   };

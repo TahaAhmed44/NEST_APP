@@ -8,6 +8,7 @@ export class Token {
 
   @Prop({ type: Date, required: true })
   expiredAt: Date;
+  
   @Prop({ type: Types.ObjectId, required: true, ref: 'User' })
   createdBy: Types.ObjectId;
 }
@@ -15,6 +16,7 @@ export class Token {
 export type TokenDocument = HydratedDocument<Token>;
 const tokenSchema = SchemaFactory.createForClass(Token);
 tokenSchema.index({ expiredAt: 1 }, { expireAfterSeconds: 0 });
+
 export const TokenModel = MongooseModule.forFeature([
   { name: Token.name, schema: tokenSchema },
 ]);

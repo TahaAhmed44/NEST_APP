@@ -10,7 +10,6 @@ import {
   ResendConfirmEmailDTO,
   SignupBodyDTO,
 } from './dto/auth.dto';
-import { OtpRepository, UserDocument, UserRepository } from 'src/DB';
 import {
   compareHash,
   generateNumericalOtp,
@@ -19,6 +18,8 @@ import {
   ProviderEnum,
   TokenService,
 } from 'src/common';
+import { OtpRepository, UserDocument, UserRepository } from 'src/DB';
+
 import { Types } from 'mongoose';
 
 export interface IUser {
