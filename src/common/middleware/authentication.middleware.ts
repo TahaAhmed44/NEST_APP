@@ -1,8 +1,23 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
-import { Response, NextFunction } from 'express';
+import {
+  BadRequestException,
+  Injectable,
+  NestMiddleware,
+} from '@nestjs/common';
+import { Response, NextFunction, Request } from 'express';
 import { TokenService } from '../service';
 import { TokenEnum } from '../enums';
 import type { IAuthRequest } from '../interface';
+
+export const preAuth = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  if (!(req.headers.authorization?.split(' ').length == 2)) {
+    throw new BadRequestException('Missing authorization key!!!');
+  }
+  next();
+};
 
 @Injectable()
 export class AuthenticationMiddleware implements NestMiddleware {

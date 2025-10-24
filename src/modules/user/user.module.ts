@@ -1,20 +1,16 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import { TokenService } from 'src/common';
-import { JwtService } from '@nestjs/jwt';
-import { TokenModel, TokenRepository, UserModel, UserRepository } from 'src/DB';
+import { preAuth } from 'src/common/middleware/authentication.middleware';
 
 @Module({
-  imports: [UserModel, TokenModel],
+  imports: [],
   exports: [],
   controllers: [UserController],
-  providers: [
-    UserService,
-    TokenService,
-    JwtService,
-    UserRepository,
-    TokenRepository,
-  ],
+  providers: [UserService],
 })
-export class UserModule {}
+export class UserModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(preAuth).forRoutes(UserController);
+  }
+}

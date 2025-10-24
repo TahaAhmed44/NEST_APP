@@ -1,28 +1,12 @@
 import { Module } from '@nestjs/common';
 import { AuthenticationController } from './auth.controller';
 import { AuthenticationService } from './auth.service';
-import { JwtService } from '@nestjs/jwt';
-import { TokenService } from 'src/common';
-import {
-  OtpModel,
-  OtpRepository,
-  TokenModel,
-  TokenRepository,
-  UserModel,
-  UserRepository,
-} from 'src/DB';
+import { OtpModel, OtpRepository } from 'src/DB';
 
 @Module({
-  imports: [UserModel, OtpModel, TokenModel],
+  imports: [OtpModel],
   controllers: [AuthenticationController],
-  providers: [
-    AuthenticationService,
-    UserRepository,
-    TokenRepository,
-    OtpRepository,
-    JwtService,
-    TokenService,
-  ],
-  exports: [AuthenticationService],
+  providers: [AuthenticationService, OtpRepository],
+  exports: [],
 })
 export class AuthenticationModule {}
