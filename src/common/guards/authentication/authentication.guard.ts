@@ -16,7 +16,6 @@ export class AuthenticationGuard implements CanActivate {
       this.reflector.getAllAndOverride<TokenEnum>(tokenName, [
         context.getHandler(),
       ]) ?? TokenEnum.access;
-    console.log({ context, tokenType });
 
     let req: any;
     let authorization: string = '';

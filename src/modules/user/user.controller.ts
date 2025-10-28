@@ -2,8 +2,11 @@ import {
   Controller,
   Get,
   Headers,
+  ParseFilePipe,
+  Patch,
   Post,
   Req,
+  UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
@@ -12,6 +15,9 @@ import { Auth, RoleEnum, User } from 'src/common';
 import type { UserDocument } from 'src/DB';
 import { PreferredLanguageInterceptor } from 'src/common/interceptors';
 import { delay, Observable, of } from 'rxjs';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { localFileUpload, multerValidation } from 'src/common/utils/multer';
+import type { IMulterFile } from 'src/common';
 
 @Controller('user')
 export class UserController {
@@ -34,5 +40,17 @@ export class UserController {
     );
 
     return { message: 'Done' };
+  }
+
+  @UseInterceptors(
+    FileInterceptor(
+      'profileImage',
+      localFileUpload({ folder: 'User', validation: multerValidation.image }),
+    ),
+  )
+  @Auth([RoleEnum.user])
+  @Patch('profile-image')
+  profileImage(@UploadedFile(ParseFilePipe) file: IMulterFile) {
+    return { message: 'Done', file };
   }
 }

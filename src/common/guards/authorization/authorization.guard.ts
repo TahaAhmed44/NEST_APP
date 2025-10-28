@@ -11,8 +11,6 @@ export class AuthorizationGuard implements CanActivate {
       this.reflector.getAllAndOverride<RoleEnum[]>(roleName, [
         context.getHandler(),
       ]) ?? [];
-    console.log({ context });
-
     let role: RoleEnum = RoleEnum.user;
     switch (context.getType()) {
       case 'http':
