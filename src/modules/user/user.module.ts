@@ -2,10 +2,7 @@ import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { preAuth } from 'src/common/middleware/authentication.middleware';
-import { MulterModule } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import type { Request } from 'express';
-import { randomUUID } from 'crypto';
+import { S3Service } from 'src/common';
 
 @Module({
   imports: [
@@ -28,7 +25,7 @@ import { randomUUID } from 'crypto';
   ],
   exports: [],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, S3Service],
 })
 export class UserModule {
   configure(consumer: MiddlewareConsumer) {

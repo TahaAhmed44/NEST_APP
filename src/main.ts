@@ -4,12 +4,10 @@ import { LoggingInterceptor } from './common/interceptors';
 import { setDefaultLanguage } from './common';
 import * as express from 'express';
 import path from 'path';
-import { NestExpressApplication } from '@nestjs/platform-express';
+
 async function bootstrap() {
   const port: number | string = process.env.PORT ?? 5000;
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
-
-  console.log(path.resolve('./uploads'));
+  const app = await NestFactory.create(AppModule);
 
   // app.useStaticAssets(path.join(__dirname, '..', 'uploads'), {
   //   prefix: '/uploads/',

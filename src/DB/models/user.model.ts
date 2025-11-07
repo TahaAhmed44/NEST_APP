@@ -8,6 +8,7 @@ import {
 import {
   GenderEnum,
   generateHash,
+  IUser,
   LanguageEnum,
   ProviderEnum,
   RoleEnum,
@@ -21,7 +22,7 @@ import { HydratedDocument } from 'mongoose';
   toJSON: { virtuals: true },
   toObject: { virtuals: true },
 })
-export class User {
+export class User implements IUser {
   @Prop({
     type: String,
     required: true,
@@ -60,7 +61,6 @@ export class User {
 
   @Prop({
     type: Date,
-    required: false,
   })
   confirmAt: Date;
 
@@ -102,12 +102,15 @@ export class User {
 
   @Prop({
     type: Date,
-    required: false,
   })
   changeCredentialsTime: Date;
 
   @Virtual()
   otp: OtpDocument[];
+  @Prop({
+    type: String,
+  })
+  profileImage: string;
 }
 
 const userSchema = SchemaFactory.createForClass(User);

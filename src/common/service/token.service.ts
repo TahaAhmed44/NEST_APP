@@ -57,6 +57,9 @@ export class TokenService {
       case RoleEnum.admin:
         signatureLevel = SignatureLevelEnum.System;
         break;
+      case RoleEnum.superAdmin:
+        signatureLevel = SignatureLevelEnum.System;
+        break;
       default:
         signatureLevel = SignatureLevelEnum.Bearer;
         break;

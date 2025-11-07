@@ -29,7 +29,7 @@ export const localFileUpload = ({
       filename(req: Request, file: IMulterFile, callback: Function) {
         const fileName =
           randomUUID() + '_' + Date.now() + '_' + file.originalname;
-        file.finalPath = basePath + `/${file.originalname}`;
+        file.finalPath = basePath + `/${fileName}`;
         callback(null, fileName);
       },
     }),

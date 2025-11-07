@@ -113,6 +113,15 @@ export abstract class DatabaseRepository<
     update: UpdateQuery<TDocument>;
     options?: MongooseUpdateQueryOptions<TDocument> | null;
   }): Promise<UpdateWriteOpResult> {
+    if (Array.isArray(update)) {
+      update.push({
+        $set: {
+          __v: { $add: ['$__v', 1] },
+        },
+      });
+      return await this.model.updateOne(filter || {}, update, options);
+    }
+
     return await this.model.updateOne(
       filter,
       { ...update, $inc: { __v: 1 } },
@@ -169,10 +178,58 @@ export abstract class DatabaseRepository<
     update?: UpdateQuery<TDocument>;
     options?: QueryOptions<TDocument> | null;
   }): Promise<TDocument | Lean<TDocument> | null> {
+    if (Array.isArray(update)) {
+      update.push({
+        $set: {
+          __v: { $add: ['$__v', 1] },
+        },
+      });
+      return await this.model.findOneAndUpdate(filter || {}, update, options);
+    }
+
     return await this.model.findOneAndUpdate(
       filter,
       { ...update, $inc: { __v: 1 } },
       options,
     );
+  }
+
+  async paginate({
+    filter,
+    options = {},
+    select,
+    page = 'all',
+    size = 5,
+  }: {
+    filter: RootFilterQuery<TDocument>;
+    select?: ProjectionType<TDocument> | undefined;
+    options?: QueryOptions<TDocument> | undefined;
+    page?: number | 'all';
+    size?: number;
+  }): Promise<{
+    docsCount?: number;
+    limit?: number;
+    pages?: number;
+    currentPage?: number;
+    docs: TDocument[] | Lean<TDocument>[];
+  }> {
+    let docsCount: number | undefined = undefined;
+    let pages: number | undefined = undefined;
+    if (page != 'all') {
+      page = Math.floor(!page || page < 1 ? 1 : page);
+      options.limit = Math.floor(!size || size < 1 ? 5 : size);
+      options.skip = (page - 1) * options.limit;
+      docsCount = await this.model.countDocuments(filter);
+      pages = Math.ceil(docsCount / options.limit);
+    }
+
+    const docs = await this.find({ filter, select, options });
+    return {
+      docsCount,
+      limit: options.limit,
+      pages,
+      currentPage: page != 'all' ? page : undefined,
+      docs,
+    };
   }
 }

@@ -7,7 +7,7 @@ import {
   Post,
   ValidationPipe,
 } from '@nestjs/common';
-import { AuthenticationService} from './auth.service';
+import { AuthenticationService } from './auth.service';
 import {
   ConfirmEmailDTO,
   LoginBodyDTO,
@@ -15,6 +15,7 @@ import {
   SignupBodyDTO,
 } from './dto/auth.dto';
 import { LoginResponse } from './entities/auth.entity';
+import { IResponse, successResponse } from 'src/common';
 
 @Controller('auth')
 export class AuthenticationController {
@@ -30,35 +31,27 @@ export class AuthenticationController {
       }),
     )
     body: SignupBodyDTO,
-  ): Promise<{
-    message: string;
-  }> {
-    console.log({ body });
-
+  ): Promise<IResponse> {
     await this.authenticationService.signup(body);
-    return { message: 'Done' };
+    return successResponse({ status: 201 });
   }
 
   @Post('resend-confirm-email')
   async resendConfirmEmail(
     @Body()
     body: ResendConfirmEmailDTO,
-  ): Promise<{
-    message: string;
-  }> {
+  ): Promise<IResponse> {
     await this.authenticationService.resendConfirmEmail(body);
-    return { message: 'Done' };
+    return successResponse();
   }
 
   @Patch('confirm-email')
   async confirmEmail(
     @Body()
     body: ConfirmEmailDTO,
-  ): Promise<{
-    message: string;
-  }> {
+  ): Promise<IResponse> {
     await this.authenticationService.confirmEmail(body);
-    return { message: 'Done' };
+    return successResponse();
   }
 
   @Post('login')
@@ -72,9 +65,9 @@ export class AuthenticationController {
       }),
     )
     body: LoginBodyDTO,
-  ): Promise<LoginResponse> {
+  ): Promise<IResponse<LoginResponse>> {
     const credentials = await this.authenticationService.login(body);
 
-    return { message: 'Done', data: { credentials } };
+    return successResponse<LoginResponse>({ data: { credentials } });
   }
 }
