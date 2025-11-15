@@ -96,6 +96,8 @@ export class TokenService {
   ): Promise<LoginCredentialsResponse> => {
     const signatureLevel = await this.detectSignatureLevel(user.role);
     const signatures = await this.getSignatures(signatureLevel);
+    console.log({ signatures });
+
     const jwtid = randomUUID();
     const access_token = await this.generateToken({
       payload: {

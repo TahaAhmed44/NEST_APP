@@ -21,21 +21,4 @@ export class BrandParamsDto {
   brandId: Types.ObjectId;
 }
 
-export class GetAllDto {
-  @Type(() => Number)
-  @IsPositive()
-  @IsNumber()
-  @IsOptional()
-  page: number;
 
-  @Type(() => Number)
-  @IsPositive()
-  @IsNumber()
-  @IsOptional()
-  size: number;
-
-  @IsNotEmpty()
-  @IsString()
-  @IsOptional()
-  search: string;
-}

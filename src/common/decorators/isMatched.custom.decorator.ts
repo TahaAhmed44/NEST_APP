@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import { Types } from 'mongoose';
 
-@ValidatorConstraint({ name: 'check_matching_between_fields', async: false })
+@ValidatorConstraint({ name: 'check_MongoID', async: false })
 export class MongoDBIds implements ValidatorConstraintInterface {
   validate(ids: Types.ObjectId[], args: ValidationArguments) {
     for (const id of ids) {

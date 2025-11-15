@@ -9,6 +9,7 @@ export class AuthorizationGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const accessRoles: RoleEnum[] =
       this.reflector.getAllAndOverride<RoleEnum[]>(roleName, [
+        context.getClass(),
         context.getHandler(),
       ]) ?? [];
     let role: RoleEnum = RoleEnum.user;

@@ -24,19 +24,4 @@ export class CategoryParamsDto {
   categoryId: Types.ObjectId;
 }
 
-export class GetAllDto {
-  @IsPositive()
-  @IsNumber()
-  @IsOptional()
-  page: number;
 
-  @IsPositive()
-  @IsNumber()
-  @IsOptional()
-  size: number;
-
-  @IsNotEmpty()
-  @IsString()
-  @IsOptional()
-  search: string;
-}

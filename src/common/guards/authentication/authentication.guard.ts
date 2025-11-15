@@ -1,6 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Observable } from 'rxjs';
 import { tokenName } from 'src/common/decorators';
 import { TokenEnum } from 'src/common/enums';
 import { TokenService } from 'src/common/service';

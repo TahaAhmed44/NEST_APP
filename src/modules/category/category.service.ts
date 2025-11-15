@@ -5,14 +5,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
-import { GetAllDto, UpdateCategoryDto } from './dto/update-category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
 import {
   BrandRepository,
   CategoryDocument,
   CategoryRepository,
   UserDocument,
 } from 'src/DB';
-import { FolderEnum, S3Service } from 'src/common';
+import { FolderEnum, GetAllDto, S3Service } from 'src/common';
 import { Types } from 'mongoose';
 import { Lean } from 'src/DB/repository/database.repository';
 import { randomUUID } from 'node:crypto';

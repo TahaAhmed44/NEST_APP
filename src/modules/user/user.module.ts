@@ -5,24 +5,6 @@ import { preAuth } from 'src/common/middleware/authentication.middleware';
 import { S3Service } from 'src/common';
 
 @Module({
-  imports: [
-    // MulterModule.register({
-    //   storage: diskStorage({
-    //     destination(
-    //       req: Request,
-    //       file: Express.Multer.File,
-    //       callback: Function,
-    //     ) {
-    //       callback(null, './uploads');
-    //     },
-    //     filename(req: Request, file: Express.Multer.File, callback: Function) {
-    //       const fileName =
-    //         randomUUID() + '_' + Date.now() + '_' + file.originalname;
-    //       callback(null, fileName);
-    //     },
-    //   }),
-    // }),
-  ],
   exports: [],
   controllers: [UserController],
   providers: [UserService, S3Service],
